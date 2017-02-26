@@ -2,20 +2,22 @@ package demo;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.metamodel.MetadataSources;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
 
 public class Main {
     public static void main(String[] args) {
-        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                .build();
+        ServiceRegistry registry = new ServiceRegistryBuilder().buildServiceRegistry();
         SessionFactory sessionFactory = new MetadataSources(registry)
                 .buildMetadata()
                 .buildSessionFactory();
-        try(Session session = sessionFactory.openSession()){
+        Session session = sessionFactory.openSession();
+        try {
             session.beginTransaction();
             session.getTransaction().commit();
+        } finally {
+            session.close();
         }
     }
 
